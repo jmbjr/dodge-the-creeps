@@ -2,6 +2,11 @@ extends CanvasLayer
 
 signal start_game
 
+func _input(event: InputEvent) -> void:
+    if $StartButton.visible:
+        if Input.is_action_pressed("ui_accept"):
+            _on_StartButton_pressed()
+
 func show_message(text):
 	$MessageLabel.text = text
 	$MessageLabel.show()
