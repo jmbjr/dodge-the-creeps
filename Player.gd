@@ -11,15 +11,8 @@ func _ready():
 	screensize = get_viewport_rect().size
 	
 func _process(delta):
-	velocity = Vector2()
-	if Input.is_action_pressed("ui_right"):
-		velocity.x += 1
-	if Input.is_action_pressed("ui_left"):
-		velocity.x -= 1
-	if Input.is_action_pressed("ui_down"):
-		velocity.y += 1
-	if Input.is_action_pressed("ui_up"):
-		velocity.y -= 1
+	velocity = get_direction()
+	
 	if velocity.length() > 0:
 		$AnimatedSprite.play()
 		velocity = velocity.normalized() * SPEED
@@ -39,6 +32,12 @@ func _process(delta):
 		$AnimatedSprite.flip_h = false
 		$AnimatedSprite.flip_v = velocity.y > 0
 		
+
+func get_direction() -> Vector2:
+    return Vector2(
+        Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
+        Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up") 
+    )
 
 func _on_Player_body_entered(body):
 	hide()
