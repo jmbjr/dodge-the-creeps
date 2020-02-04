@@ -11,15 +11,8 @@ func _ready():
 	screensize = get_viewport_rect().size
 	
 func _process(delta):
-	velocity = Vector2()
-	if Input.is_action_pressed("ui_right"):
-		velocity.x += 1
-	if Input.is_action_pressed("ui_left"):
-		velocity.x -= 1
-	if Input.is_action_pressed("ui_down"):
-		velocity.y += 1
-	if Input.is_action_pressed("ui_up"):
-		velocity.y -= 1
+	velocity = get_direction()
+	var new_rotation
 	if velocity.length() > 0:
 		$AnimatedSprite.play()
 		velocity = velocity.normalized() * SPEED
@@ -31,14 +24,27 @@ func _process(delta):
 	position.y = clamp(position.y, 0, screensize.y)
 	
 	if velocity.x != 0:
+		new_rotation = PI/2 * sign(velocity.x)
 		$AnimatedSprite.animation = "right"
+		rotate_player(new_rotation)
 		$AnimatedSprite.flip_v = false
 		$AnimatedSprite.flip_h = velocity.x < 0
 	elif velocity.y != 0:
+		new_rotation = 0
 		$AnimatedSprite.animation = "up"
+		rotate_player(new_rotation)
 		$AnimatedSprite.flip_h = false
 		$AnimatedSprite.flip_v = velocity.y > 0
 		
+func rotate_player(new_rotation) -> void:
+	$AnimatedSprite.rotation = new_rotation
+	$CollisionShape2D.rotation = new_rotation
+	
+func get_direction() -> Vector2:
+    return Vector2(
+        Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
+        Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up") 
+    )
 
 func _on_Player_body_entered(body):
 	hide()
